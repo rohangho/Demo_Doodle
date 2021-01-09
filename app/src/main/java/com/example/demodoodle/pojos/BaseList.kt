@@ -31,7 +31,7 @@ class BaseList {
 
     @SerializedName("pop")
     @Expose
-    var pop: Int? = null
+    var pop: Double? = null
 
     @SerializedName("sys")
     @Expose

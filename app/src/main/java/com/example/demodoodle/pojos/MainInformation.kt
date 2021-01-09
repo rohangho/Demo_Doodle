@@ -38,5 +38,5 @@ class MainInformation {
 
     @SerializedName("temp_kf")
     @Expose
-    var tempKf: Int? = null
+    var tempKf: Double? = null
 }

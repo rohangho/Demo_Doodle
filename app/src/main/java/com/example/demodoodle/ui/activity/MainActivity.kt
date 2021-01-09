@@ -1,5 +1,6 @@
 package com.example.demodoodle.ui.activity
 
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Menu
@@ -7,9 +8,13 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.demodoodle.R
 import com.example.demodoodle.ViewModel.DisplayViewModel
 import com.example.demodoodle.pojos.BaseResponse
+import com.example.demodoodle.pojos.TomorrowWeather
 import com.example.demodoodle.ui.adapter.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -33,13 +38,26 @@ class MainActivity : AppCompatActivity() {
 
 
         weatherViewModel = ViewModelProvider(this).get(DisplayViewModel::class.java)
-        weatherViewModel.setCityId("707860")
+        weatherViewModel.setCityId("529334")
 
         weatherViewModel.getWeather().observe(this, {
-            viewPager!!.adapter = createCardAdapter(it)
-            showTabs()
+            updateUI(it)
+
         })
 
+    }
+
+    private fun updateUI(baseResponse: BaseResponse) {
+       var abc: ArrayList<String> = ArrayList()
+       val tomorrowWeather:TomorrowWeather  = TomorrowWeather(baseResponse.list!![1]?.main?.temp,
+               baseResponse.list!![1]?.main?.humidity,baseResponse.list!![1]?.main?.tempMin,baseResponse.list!![1]?.main?.tempMax,
+               baseResponse.list!![1]?.main?.feelsLike)
+        for(i in 0..1)
+        {
+            abc.add("http://openweathermap.org/img/wn/"+ baseResponse.list!![i]!!.weather!![0].icon+"@2x"+".png")
+        }
+        viewPager!!.adapter = createCardAdapter(tomorrowWeather)
+        showTabs(abc)
     }
 
 
@@ -50,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun showTabs() {
+    private fun showTabs(abc: ArrayList<String>) {
         data.add("Today")
         data.add("Tomorrow")
         val root = tabLayout!!.getChildAt(0)
@@ -65,12 +83,26 @@ class MainActivity : AppCompatActivity() {
             root.dividerDrawable = drawable
         }
 
-        for (i in data!!.indices) {
+        for (i in data.indices) {
             tabLayout!!.addTab(tabLayout!!.newTab().setText(data[i]))
         }
         TabLayoutMediator(tabLayout!!, viewPager!!) { tab, pos ->
             when (pos) {
                 pos -> {
+                    Glide.with(this).asDrawable().load(abc[pos])
+                            .into(object : CustomTarget<Drawable?>() {
+                                override fun onResourceReady(
+                                        resource: Drawable,
+                                        transition: Transition<in Drawable?>?
+                                ) {
+                                    tab.icon = resource
+                                }
+
+                                override fun onLoadCleared(placeholder: Drawable?) {
+
+                                }
+
+                            })
                     tab.text = data[pos]
                 }
             }
@@ -78,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun createCardAdapter(baseResponse: BaseResponse): ViewPagerAdapter? {
-        return ViewPagerAdapter(this, 2)
+    private fun createCardAdapter(tomorrowWeather: TomorrowWeather): ViewPagerAdapter? {
+        return ViewPagerAdapter(this, 2,tomorrowWeather)
     }
 }

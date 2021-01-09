@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.demodoodle.R
 import com.example.demodoodle.ViewModel.DisplayViewModel
 
-class DisplayFragment(var day: Int) : Fragment() {
+class DisplayTodayFragment(var day: Int) : Fragment() {
 
 
     private lateinit var viewModel: DisplayViewModel
