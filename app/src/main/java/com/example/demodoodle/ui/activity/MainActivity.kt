@@ -60,10 +60,10 @@ class MainActivity : AppCompatActivity() {
     // integer for permissions results request
     private val ALL_PERMISSIONS_RESULT = 1011
 
-    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -85,14 +85,17 @@ class MainActivity : AppCompatActivity() {
         weatherViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
 
-
-
-
         weatherViewModel.getWeather().observe(this, {
             updateUI(it)
 
         })
 
+        getLocation()
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
@@ -101,15 +104,16 @@ class MainActivity : AppCompatActivity() {
                         weatherViewModel.setCityId(coordinates)
                         val geocoder = Geocoder(this, Locale.getDefault())
                         val addresses: List<Address> = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-                        val cityName: String = addresses[0].getAddressLine(0)
+                        val cityName: String = addresses[0].countryName
                         toolbar.title = cityName
+                        repeatFun().start()
+
                     } else {
                         AlertDialog.Builder(this@MainActivity).setMessage("We are not getting GPS Connection").setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->
                             requestPermissions(permissionsRejected.toTypedArray(), ALL_PERMISSIONS_RESULT)
                         }).setNegativeButton("Cancel", null).create().show()
                     }
                 }
-
     }
 
     private fun permissionsToRequest(wantedPermissions: ArrayList<String>): ArrayList<String>? {
@@ -127,10 +131,6 @@ class MainActivity : AppCompatActivity() {
         return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onResume() {
-        super.onResume()
-        repeatFun().start()
-    }
 
     fun repeatFun(): Job {
         return GlobalScope.launch {
@@ -141,8 +141,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         repeatFun().cancel()
     }
 
@@ -234,9 +234,11 @@ class MainActivity : AppCompatActivity() {
                         AlertDialog.Builder(this@MainActivity).setMessage("These permissions are mandatory to get your location. You need to allow them.").setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->
                             requestPermissions(permissionsRejected.toTypedArray(), ALL_PERMISSIONS_RESULT)
                         }).setNegativeButton("Cancel", null).create().show()
-                        finish()
-                    }
-                }
+                        return
+                    } else
+                        getLocation()
+                } else
+                    getLocation()
             }
         }
     }

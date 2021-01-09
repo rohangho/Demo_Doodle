@@ -9,10 +9,10 @@ import com.example.demodoodle.ui.fragment.DisplayTomorrowFragment
 import com.example.sampleweather.pojos.Coordinates
 
 class ViewPagerAdapter(
-    fragmentActivity: FragmentActivity,
-    private val tabCount: Int,
-    private val tomorrowWeather: TomorrowWeather,
-    val latlond: Coordinates,
+        fragmentActivity: FragmentActivity,
+        private val tabCount: Int,
+        private val tomorrowWeather: TomorrowWeather,
+        val latlond: Coordinates,
 ) : FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int {
         return tabCount

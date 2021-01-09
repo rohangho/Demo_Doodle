@@ -28,8 +28,8 @@ class DisplayTodayFragment(var coordinates: Coordinates) : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.display_fragment, container, false)
     }
