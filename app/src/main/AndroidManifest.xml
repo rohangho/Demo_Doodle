@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DemoDoodle"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.MainActivity">
+        <activity android:name="com.example.demodoodle.ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

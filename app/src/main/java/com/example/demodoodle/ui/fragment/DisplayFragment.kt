@@ -1,4 +1,4 @@
-package com.example.demodoodle.fragment
+package com.example.demodoodle.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,20 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.demodoodle.R
 import com.example.demodoodle.ViewModel.DisplayViewModel
 
-class DisplayFragment : Fragment() {
+class DisplayFragment(var day: Int) : Fragment() {
 
-
-    companion object {
-        fun newInstance(counter: Int) = DisplayFragment(
-
-        )
-    }
 
     private lateinit var viewModel: DisplayViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.display_fragment, container, false)
     }

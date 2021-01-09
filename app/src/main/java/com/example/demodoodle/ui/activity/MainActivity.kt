@@ -1,13 +1,16 @@
-package com.example.demodoodle.activity
+package com.example.demodoodle.ui.activity
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.example.demodoodle.R
-import com.example.demodoodle.adapter.ViewPagerAdapter
+import com.example.demodoodle.ViewModel.DisplayViewModel
+import com.example.demodoodle.pojos.BaseResponse
+import com.example.demodoodle.ui.adapter.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -16,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     var tabLayout: TabLayout? = null
     var viewPager: ViewPager2? = null
+    private lateinit var weatherViewModel: DisplayViewModel
 
     private val data: ArrayList<String> = ArrayList()
 
@@ -26,9 +30,18 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tabs)
 
-        viewPager!!.adapter = createCardAdapter()
-        showTabs()
+
+
+        weatherViewModel = ViewModelProvider(this).get(DisplayViewModel::class.java)
+        weatherViewModel.setCityId("707860")
+
+        weatherViewModel.getWeather().observe(this, {
+            viewPager!!.adapter = createCardAdapter(it)
+            showTabs()
+        })
+
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -65,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun createCardAdapter(): ViewPagerAdapter? {
+    private fun createCardAdapter(baseResponse: BaseResponse): ViewPagerAdapter? {
         return ViewPagerAdapter(this, 2)
     }
 }
