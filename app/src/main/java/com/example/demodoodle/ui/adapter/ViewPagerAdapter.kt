@@ -6,9 +6,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.demodoodle.pojos.TomorrowWeather
 import com.example.demodoodle.ui.fragment.DisplayTodayFragment
 import com.example.demodoodle.ui.fragment.DisplayTomorrowFragment
+import com.example.sampleweather.pojos.Coordinates
 
 class ViewPagerAdapter(
-        fragmentActivity: FragmentActivity, private val tabCount: Int, private val tomorrowWeather: TomorrowWeather, val cityId: String,
+    fragmentActivity: FragmentActivity,
+    private val tabCount: Int,
+    private val tomorrowWeather: TomorrowWeather,
+    val latlond: Coordinates,
 ) : FragmentStateAdapter(fragmentActivity) {
     override fun getItemCount(): Int {
         return tabCount
@@ -16,7 +20,7 @@ class ViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return if (position == 0)
-            DisplayTodayFragment(cityId)
+            DisplayTodayFragment(latlond)
         else
             DisplayTomorrowFragment(tomorrowWeather)
     }

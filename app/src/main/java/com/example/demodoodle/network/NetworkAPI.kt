@@ -8,8 +8,15 @@ import retrofit2.http.Query
 
 interface NetworkAPI {
     @GET("2.5/forecast")
-    fun getListWeather(@Query("id") id: String?, @Query("appid") key: String?): Call<BaseResponseForAllDay>
+    fun getListWeather(
+        @Query("lat") lat: String?,
+        @Query("lon") lon: String?,
+        @Query("appid") key: String?
+    ): Call<BaseResponseForAllDay>
 
     @GET("2.5/weather")
-    fun getCurrent(@Query("id") id: String?, @Query("appid") key: String?): Call<TodayBaseResponse>
+    fun getCurrent(
+        @Query("lat") lat: String?,
+        @Query("lon") lon: String?, @Query("appid") key: String?
+    ): Call<TodayBaseResponse>
 }

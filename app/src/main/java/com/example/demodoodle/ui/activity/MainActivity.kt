@@ -1,11 +1,17 @@
 package com.example.demodoodle.ui.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.DialogInterface
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
@@ -18,6 +24,9 @@ import com.example.demodoodle.pojos.TomorrowWeather
 import com.example.demodoodle.ui.adapter.ViewPagerAdapter
 import com.example.demodoodle.viewModel.MainViewModel
 import com.example.demodoodle.viewModel.SharedViewModel
+import com.example.sampleweather.pojos.Coordinates
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.GlobalScope
@@ -33,12 +42,34 @@ class MainActivity : AppCompatActivity() {
     var viewPager: ViewPager2? = null
     private lateinit var weatherViewModel: MainViewModel
     private lateinit var sharedViewModel: SharedViewModel
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var coordinates: Coordinates
+
 
     private val data: ArrayList<String> = ArrayList()
+    private var permissionsToRequest: ArrayList<String>? = null
+    private val permissionsRejected: ArrayList<String> = ArrayList()
+    private val permissions: ArrayList<String> = ArrayList()
 
+    // integer for permissions results request
+    private val ALL_PERMISSIONS_RESULT = 1011
+
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION)
+        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        permissionsToRequest = permissionsToRequest(permissions)
+
+        if (permissionsToRequest!!.size > 0) {
+            requestPermissions(permissionsToRequest!!.toArray(
+                    arrayOfNulls<String>(
+                            permissionsToRequest!!.size
+                    )), ALL_PERMISSIONS_RESULT)
+        }
 
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tabs)
@@ -46,13 +77,41 @@ class MainActivity : AppCompatActivity() {
         weatherViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
 
-        weatherViewModel.setCityId("529334")
+
 
         weatherViewModel.getWeather().observe(this, {
             updateUI(it)
 
         })
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    if (location != null) {
+                        coordinates = Coordinates(location.longitude, location.latitude)
+                        weatherViewModel.setCityId(coordinates)
+                    } else {
+                        AlertDialog.Builder(this@MainActivity).setMessage("We are not getting GPS Connection").setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->
+                            requestPermissions(permissionsRejected.toTypedArray(), ALL_PERMISSIONS_RESULT)
+                        }).setNegativeButton("Cancel", null).create().show()
+                    }
+                }
+
+    }
+
+    private fun permissionsToRequest(wantedPermissions: ArrayList<String>): ArrayList<String>? {
+        val result: ArrayList<String> = ArrayList()
+        for (perm in wantedPermissions) {
+            if (!hasPermission(perm)) {
+                result.add(perm)
+            }
+        }
+        return result
+    }
+
+    private fun hasPermission(permission: String): Boolean {
+
+        return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onResume() {
@@ -146,6 +205,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createCardAdapter(tomorrowWeather: TomorrowWeather): ViewPagerAdapter? {
-        return ViewPagerAdapter(this, 2, tomorrowWeather, "529334")
+        return ViewPagerAdapter(this, 2, tomorrowWeather, coordinates)
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        when (requestCode) {
+            ALL_PERMISSIONS_RESULT -> {
+                for (perm in permissionsToRequest!!) {
+                    if (!hasPermission(perm)) {
+                        permissionsRejected.add(perm)
+                    }
+                }
+                if (permissionsRejected.size > 0) {
+                    if (shouldShowRequestPermissionRationale(permissionsRejected[0])) {
+                        AlertDialog.Builder(this@MainActivity).setMessage("These permissions are mandatory to get your location. You need to allow them.").setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->
+                            requestPermissions(permissionsRejected.toTypedArray(), ALL_PERMISSIONS_RESULT)
+                        }).setNegativeButton("Cancel", null).create().show()
+                        finish()
+                    }
+                }
+            }
+        }
+    }
+
+
 }

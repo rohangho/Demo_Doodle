@@ -7,17 +7,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.example.demodoodle.pojos.TodayBaseResponse
 import com.example.demodoodle.repository.TodayWeatherRepository
+import com.example.sampleweather.pojos.Coordinates
 
 class TodayViewModel(application: Application) : AndroidViewModel(application) {
-    private val cityId: MutableLiveData<String> = MutableLiveData()
+    private val cityId: MutableLiveData<Coordinates> = MutableLiveData()
 
 
     private val weatherData: LiveData<TodayBaseResponse> = Transformations.switchMap(cityId) {
         TodayWeatherRepository().getWeatherResponse(it)
     }
 
-    fun setCityId(id: String) {
-        cityId.value = id
+    fun setCityId(latLong: Coordinates) {
+        cityId.value = latLong
 
     }
 

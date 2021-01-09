@@ -3,6 +3,8 @@
     package="com.example.demodoodle">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -13,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DemoDoodle"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.example.demodoodle.ui.activity.MainActivity">
+        <activity
+            android:name="com.example.demodoodle.ui.activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

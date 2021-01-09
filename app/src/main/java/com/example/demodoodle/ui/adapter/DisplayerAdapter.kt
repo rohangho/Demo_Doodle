@@ -9,7 +9,8 @@ import com.example.demodoodle.R
 import com.example.demodoodle.pojos.TodayResponse
 import java.text.DecimalFormat
 
-class DisplayerAdapter(private val todayWeather: ArrayList<TodayResponse>) : RecyclerView.Adapter<DisplayerAdapter.MyViewHolder>() {
+class DisplayerAdapter(private val todayWeather: ArrayList<TodayResponse>) :
+    RecyclerView.Adapter<DisplayerAdapter.MyViewHolder>() {
 
     private val df2: DecimalFormat = DecimalFormat("#.##")
 
@@ -20,20 +21,26 @@ class DisplayerAdapter(private val todayWeather: ArrayList<TodayResponse>) : Rec
         var avgTemperatue: TextView = itemView.findViewById(R.id.avgTemp)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DisplayerAdapter.MyViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): DisplayerAdapter.MyViewHolder {
         return MyViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                        R.layout.inside_today,
-                        parent,
-                        false
-                )
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.inside_today,
+                parent,
+                false
+            )
         )
     }
 
     override fun onBindViewHolder(holder: DisplayerAdapter.MyViewHolder, position: Int) {
-        holder.minTemperature.text = (df2.format(todayWeather[position].minTemp!! - 273)).toString() + " \u2103"
-        holder.maxTemperature.text = (df2.format(todayWeather[position].maxTemp!! - 273)).toString() + " \u2103"
-        holder.avgTemperatue.text = (df2.format(todayWeather[position].temperature!! - 273)).toString() + " \u2103"
+        holder.minTemperature.text =
+            (df2.format(todayWeather[position].minTemp!! - 273)).toString() + " \u2103"
+        holder.maxTemperature.text =
+            (df2.format(todayWeather[position].maxTemp!! - 273)).toString() + " \u2103"
+        holder.avgTemperatue.text =
+            (df2.format(todayWeather[position].temperature!! - 273)).toString() + " \u2103"
     }
 
     override fun getItemCount(): Int {

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.demodoodle.pojos.TodayBaseResponse
 import com.example.sampleweather.network.NetworkAPI
 import com.example.sampleweather.network.RetrofitService.createService
+import com.example.sampleweather.pojos.Coordinates
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,23 +20,27 @@ class TodayWeatherRepository {
     }
 
 
-    fun getWeatherResponse(cityId: String?): MutableLiveData<TodayBaseResponse?>? {
+    fun getWeatherResponse(cityId: Coordinates): MutableLiveData<TodayBaseResponse?>? {
         val listWeather = MutableLiveData<TodayBaseResponse?>()
-        networkAPI!!.getCurrent(cityId, "19c582ab57628fee373c6c741f78d8d8")
-                .enqueue(object : Callback<TodayBaseResponse> {
-                    override fun onResponse(
-                            call: Call<TodayBaseResponse>,
-                            todayBaseResponse: Response<TodayBaseResponse>
-                    ) {
-                        if (todayBaseResponse.isSuccessful)
-                            listWeather.value = todayBaseResponse.body()
-                    }
+        networkAPI!!.getCurrent(
+            cityId.lat.toString(),
+            cityId.lon.toString(),
+            "19c582ab57628fee373c6c741f78d8d8"
+        )
+            .enqueue(object : Callback<TodayBaseResponse> {
+                override fun onResponse(
+                    call: Call<TodayBaseResponse>,
+                    todayBaseResponse: Response<TodayBaseResponse>
+                ) {
+                    if (todayBaseResponse.isSuccessful)
+                        listWeather.value = todayBaseResponse.body()
+                }
 
-                    override fun onFailure(call: Call<TodayBaseResponse>, t: Throwable) {
-                        Log.e("Api Issue", t.localizedMessage!!)
-                    }
+                override fun onFailure(call: Call<TodayBaseResponse>, t: Throwable) {
+                    Log.e("Api Issue", t.localizedMessage!!)
+                }
 
-                })
+            })
         return listWeather
     }
 }

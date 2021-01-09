@@ -14,8 +14,9 @@ import com.example.demodoodle.pojos.TodayResponse
 import com.example.demodoodle.ui.adapter.DisplayerAdapter
 import com.example.demodoodle.viewModel.SharedViewModel
 import com.example.demodoodle.viewModel.TodayViewModel
+import com.example.sampleweather.pojos.Coordinates
 
-class DisplayTodayFragment(var cityId: String) : Fragment() {
+class DisplayTodayFragment(var coordinates: Coordinates) : Fragment() {
 
 
     private lateinit var viewModel: TodayViewModel
@@ -27,8 +28,8 @@ class DisplayTodayFragment(var cityId: String) : Fragment() {
 
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.display_fragment, container, false)
     }
@@ -49,10 +50,10 @@ class DisplayTodayFragment(var cityId: String) : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(TodayViewModel::class.java)
         viewModel = ViewModelProvider(this).get(TodayViewModel::class.java)
-        viewModel.setCityId("529334")
+        viewModel.setCityId(coordinates)
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         sharedViewModel.getRefreshStatus().observe(requireActivity(), {
-            viewModel.setCityId("529334")
+            viewModel.setCityId(coordinates)
         })
 
         viewModel.getTodayWeather().observe(viewLifecycleOwner, {
