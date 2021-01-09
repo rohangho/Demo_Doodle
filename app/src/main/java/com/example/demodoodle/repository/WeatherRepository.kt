@@ -2,7 +2,7 @@ package com.example.demodoodle.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.demodoodle.pojos.BaseResponse
+import com.example.demodoodle.pojos.BaseResponseForAllDay
 import com.example.sampleweather.network.NetworkAPI
 import com.example.sampleweather.network.RetrofitService.createService
 import retrofit2.Call
@@ -19,23 +19,23 @@ class WeatherRepository {
     }
 
 
-    fun getWeatherResponse(cityId: String?): MutableLiveData<BaseResponse?>? {
-        val listWeather = MutableLiveData<BaseResponse?>()
+    fun getWeatherResponse(cityId: String?): MutableLiveData<BaseResponseForAllDay?>? {
+        val listWeather = MutableLiveData<BaseResponseForAllDay?>()
         networkAPI!!.getListWeather(cityId, "19c582ab57628fee373c6c741f78d8d8")
-            .enqueue(object : Callback<BaseResponse> {
-                override fun onResponse(
-                    call: Call<BaseResponse>,
-                    response: Response<BaseResponse>
-                ) {
-                    if (response.isSuccessful)
-                        listWeather.value = response.body()
-                }
+                .enqueue(object : Callback<BaseResponseForAllDay> {
+                    override fun onResponse(
+                            call: Call<BaseResponseForAllDay>,
+                            responseForAllDay: Response<BaseResponseForAllDay>
+                    ) {
+                        if (responseForAllDay.isSuccessful)
+                            listWeather.value = responseForAllDay.body()
+                    }
 
-                override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
-                    Log.e("Api Issue", t.localizedMessage!!)
-                }
+                    override fun onFailure(call: Call<BaseResponseForAllDay>, t: Throwable) {
+                        Log.e("Api Issue", t.localizedMessage!!)
+                    }
 
-            })
+                })
         return listWeather
     }
 }

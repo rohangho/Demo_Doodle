@@ -12,10 +12,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.demodoodle.R
-import com.example.demodoodle.ViewModel.DisplayViewModel
-import com.example.demodoodle.pojos.BaseResponse
+import com.example.demodoodle.pojos.BaseResponseForAllDay
 import com.example.demodoodle.pojos.TomorrowWeather
 import com.example.demodoodle.ui.adapter.ViewPagerAdapter
+import com.example.demodoodle.viewModel.MainViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     var tabLayout: TabLayout? = null
     var viewPager: ViewPager2? = null
-    private lateinit var weatherViewModel: DisplayViewModel
+    private lateinit var weatherViewModel: MainViewModel
 
     private val data: ArrayList<String> = ArrayList()
 
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        weatherViewModel = ViewModelProvider(this).get(DisplayViewModel::class.java)
+        weatherViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         weatherViewModel.setCityId("529334")
 
         weatherViewModel.getWeather().observe(this, {
@@ -47,14 +47,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun updateUI(baseResponse: BaseResponse) {
-       var abc: ArrayList<String> = ArrayList()
-       val tomorrowWeather:TomorrowWeather  = TomorrowWeather(baseResponse.list!![1]?.main?.temp,
-               baseResponse.list!![1]?.main?.humidity,baseResponse.list!![1]?.main?.tempMin,baseResponse.list!![1]?.main?.tempMax,
-               baseResponse.list!![1]?.main?.feelsLike)
-        for(i in 0..1)
-        {
-            abc.add("http://openweathermap.org/img/wn/"+ baseResponse.list!![i]!!.weather!![0].icon+"@2x"+".png")
+    private fun updateUI(baseResponseForAllDay: BaseResponseForAllDay) {
+        var abc: ArrayList<String> = ArrayList()
+        val tomorrowWeather = TomorrowWeather(baseResponseForAllDay.list!![1].main?.temp,
+                baseResponseForAllDay.list!![1].main?.humidity, baseResponseForAllDay.list!![1].main?.tempMin, baseResponseForAllDay.list!![1].main?.tempMax,
+                baseResponseForAllDay.list!![1].main?.feelsLike)
+        for (i in 0..1) {
+            abc.add("http://openweathermap.org/img/wn/" + baseResponseForAllDay.list!![i].weather!![0].icon + "@2x" + ".png")
         }
         viewPager!!.adapter = createCardAdapter(tomorrowWeather)
         showTabs(abc)
@@ -111,6 +110,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createCardAdapter(tomorrowWeather: TomorrowWeather): ViewPagerAdapter? {
-        return ViewPagerAdapter(this, 2,tomorrowWeather)
+        return ViewPagerAdapter(this, 2, tomorrowWeather, "529334")
     }
 }

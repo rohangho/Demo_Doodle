@@ -3,7 +3,7 @@ package com.example.demodoodle.pojos
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class BaseResponse {
+class BaseResponseForAllDay {
     @SerializedName("cod")
     @Expose
     var cod: String? = null

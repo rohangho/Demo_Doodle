@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.DisplayTodayFragment">
 
-    <TextView
-        android:id="@+id/tvCounter"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerDisplayer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="dfxgchj" />
+        android:layout_height="match_parent" />
 
 </FrameLayout>
