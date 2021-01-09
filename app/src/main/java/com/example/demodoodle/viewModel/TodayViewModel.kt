@@ -17,9 +17,6 @@ class TodayViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setCityId(id: String) {
-        if (cityId.value == id) {
-            return
-        }
         cityId.value = id
 
     }

@@ -12,6 +12,7 @@ import com.example.demodoodle.R
 import com.example.demodoodle.pojos.TodayBaseResponse
 import com.example.demodoodle.pojos.TodayResponse
 import com.example.demodoodle.ui.adapter.DisplayerAdapter
+import com.example.demodoodle.viewModel.SharedViewModel
 import com.example.demodoodle.viewModel.TodayViewModel
 
 class DisplayTodayFragment(var cityId: String) : Fragment() {
@@ -21,6 +22,8 @@ class DisplayTodayFragment(var cityId: String) : Fragment() {
     private lateinit var listDisplayer: RecyclerView
     private lateinit var displayerAdapter: DisplayerAdapter
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var sharedViewModel: SharedViewModel
+    private var todayList: ArrayList<TodayResponse> = ArrayList()
 
 
     override fun onCreateView(
@@ -36,15 +39,21 @@ class DisplayTodayFragment(var cityId: String) : Fragment() {
         linearLayoutManager = LinearLayoutManager(activity)
         linearLayoutManager.reverseLayout = true
         linearLayoutManager.stackFromEnd = true
+        displayerAdapter = DisplayerAdapter(todayList)
+        listDisplayer.adapter = displayerAdapter
         listDisplayer.layoutManager = linearLayoutManager
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(TodayViewModel::class.java)
-
         viewModel = ViewModelProvider(this).get(TodayViewModel::class.java)
         viewModel.setCityId("529334")
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        sharedViewModel.getRefreshStatus().observe(requireActivity(), {
+            viewModel.setCityId("529334")
+        })
 
         viewModel.getTodayWeather().observe(viewLifecycleOwner, {
 
@@ -55,8 +64,9 @@ class DisplayTodayFragment(var cityId: String) : Fragment() {
 
     private fun updateList(it: TodayBaseResponse?) {
         val todayRespose = TodayResponse(it?.main?.temp, it?.main?.tempMin, it?.main?.tempMax)
-        displayerAdapter = DisplayerAdapter(todayRespose)
-        listDisplayer.adapter = displayerAdapter
+        todayList.add(todayRespose)
+        displayerAdapter.notifyDataSetChanged()
+
     }
 
 }

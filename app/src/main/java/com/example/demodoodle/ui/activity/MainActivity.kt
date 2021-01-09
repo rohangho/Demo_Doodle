@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +17,7 @@ import com.example.demodoodle.pojos.BaseResponseForAllDay
 import com.example.demodoodle.pojos.TomorrowWeather
 import com.example.demodoodle.ui.adapter.ViewPagerAdapter
 import com.example.demodoodle.viewModel.MainViewModel
+import com.example.demodoodle.viewModel.SharedViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -23,8 +25,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 class MainActivity : AppCompatActivity() {
 
     var tabLayout: TabLayout? = null
+    var counter = 0
     var viewPager: ViewPager2? = null
     private lateinit var weatherViewModel: MainViewModel
+    private lateinit var sharedViewModel: SharedViewModel
 
     private val data: ArrayList<String> = ArrayList()
 
@@ -38,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
 
         weatherViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
+
         weatherViewModel.setCityId("529334")
 
         weatherViewModel.getWeather().observe(this, {
@@ -64,6 +70,15 @@ class MainActivity : AppCompatActivity() {
         val inflater = menuInflater
         inflater.inflate(R.menu.home_menu, menu)
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.refresh ->
+                sharedViewModel.update(counter)
+        }
+        return true
+
     }
 
 
