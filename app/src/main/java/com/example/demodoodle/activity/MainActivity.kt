@@ -1,10 +1,13 @@
-package com.example.demodoodle
+package com.example.demodoodle.activity
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.Menu
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
+import com.example.demodoodle.R
+import com.example.demodoodle.adapter.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -23,8 +26,14 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tabs)
 
-        showTabs()
         viewPager!!.adapter = createCardAdapter()
+        showTabs()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.home_menu, menu)
+        return true
     }
 
 
@@ -49,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout!!, viewPager!!) { tab, pos ->
             when (pos) {
                 pos -> {
-                    tab.text = data[pos - 1]
+                    tab.text = data[pos]
                 }
             }
         }.attach()

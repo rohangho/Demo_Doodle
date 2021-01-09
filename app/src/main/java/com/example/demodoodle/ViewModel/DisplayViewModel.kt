@@ -1,4 +1,4 @@
-package com.example.demodoodle
+package com.example.demodoodle.ViewModel
 
 import androidx.lifecycle.ViewModel
 
