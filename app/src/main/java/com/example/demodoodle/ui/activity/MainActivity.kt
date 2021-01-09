@@ -20,6 +20,10 @@ import com.example.demodoodle.viewModel.MainViewModel
 import com.example.demodoodle.viewModel.SharedViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,8 +43,6 @@ class MainActivity : AppCompatActivity() {
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tabs)
 
-
-
         weatherViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
 
@@ -51,6 +53,25 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        repeatFun().start()
+    }
+
+    fun repeatFun(): Job {
+        return GlobalScope.launch {
+            while (true) {
+                sharedViewModel.update(counter++)
+                delay(900000)
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        repeatFun().cancel()
     }
 
     private fun updateUI(baseResponseForAllDay: BaseResponseForAllDay) {
@@ -75,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh ->
-                sharedViewModel.update(counter)
+                sharedViewModel.update(counter++)
         }
         return true
 

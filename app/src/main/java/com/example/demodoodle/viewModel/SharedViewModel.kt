@@ -10,7 +10,7 @@ class SharedViewModel(application: Application) : AndroidViewModel(application) 
     private val commoRefreshCounter: MutableLiveData<Int> = MutableLiveData()
 
     fun update(item: Int) {
-        commoRefreshCounter.value = item
+        commoRefreshCounter.postValue(item)
     }
 
     fun getRefreshStatus(): MutableLiveData<Int> {
