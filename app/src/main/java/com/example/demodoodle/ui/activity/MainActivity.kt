@@ -6,6 +6,8 @@ import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.view.Menu
@@ -13,6 +15,7 @@ import android.view.MenuItem
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -33,6 +36,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var coordinates: Coordinates
+    private lateinit var toolbar: Toolbar
 
 
     private val data: ArrayList<String> = ArrayList()
@@ -73,9 +79,12 @@ class MainActivity : AppCompatActivity() {
 
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tabs)
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         weatherViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
+
 
 
 
@@ -90,6 +99,10 @@ class MainActivity : AppCompatActivity() {
                     if (location != null) {
                         coordinates = Coordinates(location.longitude, location.latitude)
                         weatherViewModel.setCityId(coordinates)
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        val addresses: List<Address> = geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        val cityName: String = addresses[0].getAddressLine(0)
+                        toolbar.title = cityName
                     } else {
                         AlertDialog.Builder(this@MainActivity).setMessage("We are not getting GPS Connection").setPositiveButton("OK", DialogInterface.OnClickListener { dialogInterface, i ->
                             requestPermissions(permissionsRejected.toTypedArray(), ALL_PERMISSIONS_RESULT)
